@@ -244,6 +244,19 @@ Confetti uitzetten
         <div id="balloon-area" style="position:absolute; inset:0; pointer-events:none;"></div>
       </div>
 
+<button id="play-btn" style="
+  margin-top:15px; 
+  padding:10px 14px; 
+  border-radius:10px; 
+  background:#E18AB2; 
+  color:white; 
+  border:none; 
+  cursor:pointer;
+  font-size:16px;
+">
+🎵 Klik mij voor muziek!
+</button>
+      
       <div style="height:16px"></div>
 
       <!-- SPELLETJES -->
@@ -508,6 +521,32 @@ document.getElementById("toggle-confetti").addEventListener("click", toggleConfe
 </script>
 
 <script>
+// AUDIO PLAYER
+const audio = new Audio("Yrsa.mp3");
+let isPlaying = false;
+
+const playBtn = document.getElementById("play-btn");
+
+playBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    audio.play();
+    playBtn.textContent = "⏸️ Pauzeren";
+    isPlaying = true;
+  } else {
+    audio.pause();
+    playBtn.textContent = "🎵 Klik mij voor muziek!";
+    isPlaying = false;
+  }
+});
+
+// Reset knop als audio vanzelf eindigt
+audio.addEventListener("ended", () => {
+  playBtn.textContent = "🎵 Klik mij voor muziek!";
+  isPlaying = false;
+});
+</script>
+  
+<script>
 /* BERICHTJES – volledige versies */
 
 const messages = [
@@ -596,5 +635,6 @@ messages.forEach(([name, text]) => {
 
 </body>
 </html>
+
 
 
