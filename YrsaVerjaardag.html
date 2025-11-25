@@ -508,14 +508,80 @@ document.getElementById("toggle-confetti").addEventListener("click", toggleConfe
 </script>
 
 <script>
-/* BERICHTJES (ongewijzigd) */
+/* BERICHTJES – volledige versies */
+
 const messages = [
-  ["Papa", "Lieve Yrsa, ik ben super trots op je en hou van je!"],
-  ["Mama", "Gefeliciteerd mooie meid, ik ben zo blij met jou!"],
-  ["Junah", "Je bent de allerliefste zus die ik me kan wensen!"],
-  ["Senna", "Happy birthday sis! Hou van jou!"],
-  ["Molly", "Waf waf! (Ik hou van knuffels!)"],
-  ["Indy", "Je bent mijn favoriete mens!"],
+  ["Papa", `
+Lieve Yrsa,
+
+Van harte gefeliciteerd met je 12e verjaardag!!!
+
+Van baby naar kleuter, peuter, schoolkind, tiener en nu...een echte puber.
+
+Als de dag van gisteren herinner ik me nog dat je zelfstandig ging staan tijdens een bezoek aan de Beekse Bergen. Dat was in de herfstvakantie van 2014; 12 oktober om precies te zijn (zie foto).
+
+En nu zit je alweer op het voortgezet onderwijs. Het gaat allemaal zo snel .... 😅
+
+We gaan er een mooie dag van maken.
+
+Love you!
+`],
+
+  ["Mama", `
+Gefeliciteerd Princes!❤️
+
+Mij werd gevraagd wat nou typisch Yrsa was.
+
+Vroeger had je al van die leuke woordjes: oppelele (afgelopen) als iets afgelopen was en dan deed je de handjes omhoog. En je zei altijd: “was dat luid?” (waar komt dat geluid vandaan?)
+
+En nog steeds: “ik moet dat nodig hebben”.
+
+Je bent een lieve dikke knuffelkont met altijd haar duimpje in de mond. Al als baby in de buik (echo) zat je met de duim in je mond!
+
+Je was echt een meisje-meisje vroeger. Wilde nooit broeken aan, het liefst alles roze, en vond jongensdingen stom.
+
+Dat verandert nu wel 😉
+`],
+
+  ["Junah", `
+Hey lief zusjee, Gefeliciteerdd!
+
+Aangezien ik helaas niet bij de verjaardag kan zijn heb ik dit als een soort tussenoplossing bedacht. Ik hoop dat je het een leuk cadeautje vindt en dat je de berichtjes van de anderen ook leuk vindt.
+
+De tijd gaat echt snel: het ene moment begin je net aan de basisschool en nu zit je alweer op de middelbare! (wat volgens mij dikke prima gaat)
+
+Je bent echt een schat van een zusje die soms net zo gek is als d’r broer, maar dat maakt ons juist zo grappig en opfleurend!
+
+Als je ooit ergens tegenaan loopt of ergens mee zit ben ik er altijd! ❤️
+
+Hopelijk krijg je veel cadeautjes en heb je het gezellig met je vriendinnen!
+`],
+
+  ["Senna", `
+Hoi lief zusje, of moet ik je al zus noemen nu je 12 bent?
+Ik ben zo blij dat ik alles heb mogen meemaken: dat ik je helemaal heb zien opgroeien tot het leuke zusje dat je nu bent. Soms voelt het alsof het gisteren was dat je nog met je schildpadje rondliep… en nu word je gewoon twaalf. Waar is de tijd gebleven?!
+
+We hebben al zulke mooie herinneringen samen. Denk aan onze geweldige vakantie naar Amerika met alle gekke foto’s die we maakten—en natuurlijk Thailand, waar we zoveel moois hebben gezien en meegemaakt. En dit gaan we vast ook weer meemaken in Mexico :) Het zijn die momenten die me altijd bijblijven en waar ik gelukkig van word.
+
+Ik kan altijd met je lachen. En ja… we hebben soms onze discussies, maar dat hoort erbij als broer en zus. Als we nooit ruzie zouden hebben, zou het pas echt verdacht zijn.
+
+Ik ben súperblij met jou als zusje. Je bent lief, grappig, soms een beetje koppig (dat heb je níet van mij natuurlijk 😉), maar altijd jezelf. En ik hoop dat ik nog héél lang mag genieten van jouw leuke en lieve energie. Ik vind het ook oprecht superleuk dat je nu lekker op voetbal zit, dus als je nog eens een balletje wilt trappen kan je mij altijd vragen!
+
+Je gaat nu de middelbare school in, een tijd die superleuk kan worden: nieuwe vrienden, nieuwe dingen, en natuurlijk weer een heleboel nieuwe roddels die ik dan allemaal weer hoor haha. School is niet altijd leuk, maar geniet ervan — je blijft natuurlijk niet altijd 12.
+
+En onthoud dit goed: ook al word je ouder, ook al doe je straks misschien alsof je te cool bent voor je grote broers, als je je ooit even rot voelt, ben ik er altijd voor je.
+
+Dikke knuffel en een hele mooie en gezellige verjaardag gewenst, lief zus(je).
+Je kleine grote broer.
+`],
+
+  ["Molly", `
+Miauw Miauw Miauw Miauw Miauw Miauw
+`],
+
+  ["Indy", `
+Dikke Miauw Dikke Miauw Dikke Miauw Dikke Miauw Dikke Miauw Dikke Miauw
+`],
 ];
 
 const msgContainer = document.getElementById("messages");
@@ -523,10 +589,11 @@ const msgContainer = document.getElementById("messages");
 messages.forEach(([name, text]) => {
   const div = document.createElement("div");
   div.className = "card";
-  div.innerHTML = `<h3>${name}</h3><p>${text}</p>`;
+  div.innerHTML = `<h3>${name}</h3><p>${text.replace(/\n/g, "<br>")}</p>`;
   msgContainer.appendChild(div);
 });
 </script>
 
 </body>
 </html>
+
