@@ -179,18 +179,46 @@
       font-size:16px;
       line-height:1.5;
     }
+
+    /* CONFETTI */
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  opacity: 0.9;
+  pointer-events: none;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
   </style>
 </head>
 
 <body>
 <div class="wrap">
 
-  <header>
-    <div>
-      <h1>Verjaardag Yrsa!</h1>
-      <p class="lead">Een vrolijke, paardenrijke pagina met ballonnen, spelletjes en plek voor foto's.</p>
-    </div>
-  </header>
+<button id="toggle-confetti" style="
+  position:fixed; 
+  bottom:20px; 
+  right:20px; 
+  padding:10px 16px; 
+  border-radius:10px; 
+  background:#5DA7A7; 
+  color:white; 
+  border:none; 
+  cursor:pointer;
+  z-index:9999;">
+Confetti uitzetten
+</button>
+
 
   <main>
 
@@ -199,8 +227,8 @@
       <!-- HERO -->
       <div class="card hero big-card" id="hero">
         <div class="hero-content">
-          <h2>Hoera! Yrsa is 12! 🎂</h2>
-          <p class="subtitle">Voeg leuke foto's toe, speel spelletjes en laat verjaardagswensen achter.</p>
+          <h2>Hoera! Yrsa is 12 🎂</h2>
+          <p class="subtitle"></p>
         </div>
         <div id="balloon-area" style="position:absolute; inset:0; pointer-events:none;"></div>
       </div>
@@ -271,7 +299,27 @@
 
       <!-- TEKSTVAK -->
       <div class="card big-card">
-        <h3>Berichtje ✏️</h3>
+        <h3>Berichtjes</h3>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+        <br>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+        <br>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+        <br>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+        <br>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+        <br>
         <div class="text-box" contenteditable="true">
           Schrijf hier een leuk berichtje voor Yrsa! 🎉
         </div>
@@ -365,39 +413,60 @@ document.getElementById("guess-btn").onclick = guessLetter;
 startGame();
 
 /* -------------------- BALLOONS -------------------- */
-function createBalloon() {
-  const balloon = document.createElement("div");
-  balloon.className = "balloon";
+function createConfetti() {
+for (let i = 0; i < 120; i++) {
+const conf = document.createElement("div");
+conf.classList.add("confetti");
+conf.style.left = Math.random() * 100 + "vw";
+conf.style.animationDuration = 3 + Math.random() * 4 + "s";
+conf.style.backgroundColor = ["#ff70a6", "#ff9770", "#ffd670", "#70d6ff"][Math.floor(Math.random()*4)];
+document.body.appendChild(conf);
+}
+}
+createConfetti();
 
-  const colors = ["#FF6B6B","#FFD93D","#6BCB77","#4D96FF","#E18AB2","#5DA7A7"];
-  balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+let confettiEnabled = true;
 
-  const size = Math.floor(40 + Math.random() * 30);
-  balloon.style.width = size + "px";
-  balloon.style.height = size * 1.2 + "px";
+function toggleConfetti() {
+  confettiEnabled = !confettiEnabled;
 
-  balloon.style.left = Math.random() * 90 + "%";
-  balloon.style.bottom = "-150px";
+  const button = document.getElementById("toggle-confetti");
 
-  if (Math.random() > 0.65) balloon.textContent = "🎉";
-
-  const string = document.createElement("div");
-  string.className = "string";
-  string.style.height = size * 1.1 + "px";
-  balloon.appendChild(string);
-
-  balloon.style.animation = `floatUp ${6 + Math.random()*4}s linear forwards`;
-
-  document.getElementById("balloon-area").appendChild(balloon);
-
-  setTimeout(() => balloon.remove(), 11000);
+  if (!confettiEnabled) {
+    // Verwijder ALLE confetti
+    document.querySelectorAll(".confetti").forEach(el => el.remove());
+    button.textContent = "Confetti aanzetten";
+  } else {
+    // Maak confetti opnieuw
+    createConfetti();
+    button.textContent = "Confetti uitzetten";
+  }
 }
 
-setInterval(createBalloon, 600);
-for(let i=0;i<6;i++){
-  setTimeout(createBalloon, i * 300);
-}
+document.getElementById("toggle-confetti").addEventListener("click", toggleConfetti);
+
+
+const messages = [
+["Papa", "Lieve Yrsa, ik ben super trots op je en hou van je!"],
+["Mama", "Gefeliciteerd mooie meid, ik ben zo blij met jou!"],
+["Junah", "Je bent de allerliefste zus die ik me kan wensen!"],
+["Senna", "Happy birthday sis! Hou van jou!"],
+["Molly", "Waf waf! (Ik hou van knuffels!)"],
+["Indy", "Je bent mijn favoriete mens!"],
+];
+
+
+const msgContainer = document.getElementById("messages");
+
+
+messages.forEach(([name, text]) => {
+const div = document.createElement("div");
+div.className = "card";
+div.innerHTML = `<h3>${name}</h3><p>${text}</p>`;
+msgContainer.appendChild(div);
+});
 </script>
 
 </body>
 </html>
+
