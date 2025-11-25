@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verjaardagsfeestje — Hoera! 🐴🎈</title>
+
+  <style>
+    :root{
+      --bg:#FFF8F2;
+      --card:#fff;
+      --accent:#5DA7A7;
+      --accent-2:#E18AB2;
+      --text:#333;
+      --muted:#7a7a7a;
+      --shadow: 0 8px 24px rgba(59,59,59,0.08);
+      --radius:14px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background:linear-gradient(180deg, var(--bg), #FFF2F8 100%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:1100px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    h1{font-size:24px; margin:0;}
+    p.lead{margin:0;color:var(--muted);}
+
+    main{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+      align-items:start;
+    }
+
+    @media (max-width:900px){
+      main{
+        grid-template-columns:1fr;
+      }
+      aside{
+        order:3;
+      }
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .big-card{padding:24px;}
+
+    /* HERO */
+    .hero{
+      position:relative;
+      overflow:hidden;
+      min-height:240px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:10px;
+      background:rgba(255,255,255,0.6);
+      border-radius:12px;
+    }
+
+    .hero-content{
+      position:relative; z-index:6;
+    }
+
+    /* BALLOONS */
+    .balloon{
+      position:absolute;
+      border-radius:50% 50% 45% 45%;
+      transform-origin:center bottom;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      opacity:0.95;
+      box-shadow:0 10px 30px rgba(0,0,0,0.14);
+      padding:6px;
+      font-size:14px;
+    }
+    .string{
+      position:absolute;
+      width:2px;
+      background:rgba(0,0,0,0.15);
+      left:50%;
+      transform:translateX(-50%);
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(120%) rotate(-6deg); opacity:0; }
+      25%  { opacity:1; }
+      100% { transform: translateY(-120%) rotate(6deg); opacity:0; }
+    }
+
+    /* GALGJE */
+    .game-row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .hangman-canvas{
+      width:210px;
+      height:210px;
+      border-radius:10px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    input, button{
+      font-size:16px;
+    }
+
+    button{
+      cursor:pointer;
+      border-radius:8px;
+      padding:8px 12px;
+      background:#eee;
+      border:none;
+    }
+
+    /* FOTO GRID */
+    .photo-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    .photo-box{
+      width:100%;
+      padding-top:70%;
+      position:relative;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      background:#fafafa;
+      overflow:hidden;
+    }
+
+    .photo-box img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    /* TEKSTVAK */
+    .text-box{
+      min-height:120px;
+      padding:14px;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      font-size:16px;
+      line-height:1.5;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Verjaardag Yrsa!</h1>
+      <p class="lead">Een vrolijke, paardenrijke pagina met ballonnen, spelletjes en plek voor foto's.</p>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+
+      <!-- HERO -->
+      <div class="card hero big-card" id="hero">
+        <div class="hero-content">
+          <h2>Hoera! Yrsa is 12! 🎂</h2>
+          <p class="subtitle">Voeg leuke foto's toe, speel spelletjes en laat verjaardagswensen achter.</p>
+        </div>
+        <div id="balloon-area" style="position:absolute; inset:0; pointer-events:none;"></div>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <!-- SPELLETJES -->
+      <div class="card big-card">
+        <h3>Spelletjes</h3>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+          <div class="card" style="padding:12px">
+            <h4>Verjaardagsgalgje</h4>
+
+            <div class="game-row">
+
+              <div class="hangman-canvas" id="hangman-svg"></div>
+
+              <div style="flex:1">
+                <div style="margin-bottom:10px">
+                  Raad een letter:
+                </div>
+
+                <div style="display:flex; gap:8px;">
+                  <input id="letter-input" maxlength="1" placeholder="a">
+                  <button id="guess-btn">Raad</button>
+                </div>
+
+                <div id="display-word" style="font-family:monospace; font-size:26px; margin-top:10px"></div>
+
+                <div style="margin-top:8px;color:var(--muted)">
+                  Pogingen: <span id="tries-left">6</span>
+                </div>
+
+                <div style="margin-top:8px;color:var(--muted)">
+                  Geraden letters: <span id="guessed-letters">-</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+
+      <!-- FOTO GALERIJ -->
+      <div class="card big-card">
+        <h3>Fotohoek 📸</h3>
+
+        <div class="photo-grid">
+
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+          <div class="photo-box"><img src="Voorbeeld.jpg"></div>
+
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+
+      <!-- TEKSTVAK -->
+      <div class="card big-card">
+        <h3>Berichtje ✏️</h3>
+        <div class="text-box" contenteditable="true">
+          Schrijf hier een leuk berichtje voor Yrsa! 🎉
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- JS -->
+<script>
+/* -------------------- GALGJE -------------------- */
+
+const paardenWoorden = [
+  "pony","galop","zadel","sprong","manege","hoefijzer","mustang",
+  "fjord","tinker","quarter","dressuur","ruiter","veulen"
+];
+
+let secretWord = paardenWoorden[Math.floor(Math.random()*paardenWoorden.length)];
+let display = [];
+let tries = 6;
+let guessed = [];
+
+const svgBox = document.getElementById("hangman-svg");
+const displayWord = document.getElementById("display-word");
+const triesLeft = document.getElementById("tries-left");
+const guessedLetters = document.getElementById("guessed-letters");
+
+function drawHangman(errors) {
+  svgBox.innerHTML = `
+    <svg width="180" height="180" stroke="#333" stroke-width="3" fill="none">
+      <line x1="20" y1="160" x2="160" y2="160" />
+      <line x1="60" y1="160" x2="60" y2="20" />
+      <line x1="60" y1="20"  x2="120" y2="20" />
+      <line x1="120" y1="20" x2="120" y2="40" />
+
+      ${errors > 0 ? `<circle cx="120" cy="55" r="15" />` : ""}
+      ${errors > 1 ? `<line x1="120" y1="70" x2="120" y2="110" />` : ""}
+      ${errors > 2 ? `<line x1="120" y1="80" x2="100" y2="95" />` : ""}
+      ${errors > 3 ? `<line x1="120" y1="80" x2="140" y2="95" />` : ""}
+      ${errors > 4 ? `<line x1="120" y1="110" x2="105" y2="135" />` : ""}
+      ${errors > 5 ? `<line x1="120" y1="110" x2="135" y2="135" />` : ""}
+    </svg>
+  `;
+}
+
+function startGame() {
+  display = Array(secretWord.length).fill("_");
+  guessed = [];
+  displayWord.textContent = display.join(" ");
+  triesLeft.textContent = tries;
+  guessedLetters.textContent = "-";
+  drawHangman(0);
+}
+
+function guessLetter() {
+  const input = document.getElementById("letter-input");
+  const letter = input.value.toLowerCase();
+  input.value = "";
+
+  if(!letter.match(/[a-z]/)) return;
+  if(guessed.includes(letter)) return;
+
+  guessed.push(letter);
+  guessedLetters.textContent = guessed.join(", ");
+
+  if (secretWord.includes(letter)) {
+    secretWord.split("").forEach((ch,i)=>{
+      if (ch === letter) display[i] = letter;
+    });
+    displayWord.textContent = display.join(" ");
+  } else {
+    tries--;
+    triesLeft.textContent = tries;
+  }
+
+  drawHangman(6 - tries);
+
+  if (!display.includes("_")) {
+    setTimeout(()=>alert("🎉 Je hebt gewonnen!"),100);
+  }
+
+  if (tries <= 0) {
+    setTimeout(()=>alert("😢 Verloren! Het woord was: " + secretWord),100);
+  }
+}
+
+document.getElementById("guess-btn").onclick = guessLetter;
+
+startGame();
+
+/* -------------------- BALLOONS -------------------- */
+function createBalloon() {
+  const balloon = document.createElement("div");
+  balloon.className = "balloon";
+
+  const colors = ["#FF6B6B","#FFD93D","#6BCB77","#4D96FF","#E18AB2","#5DA7A7"];
+  balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+  const size = Math.floor(40 + Math.random() * 30);
+  balloon.style.width = size + "px";
+  balloon.style.height = size * 1.2 + "px";
+
+  balloon.style.left = Math.random() * 90 + "%";
+  balloon.style.bottom = "-150px";
+
+  if (Math.random() > 0.65) balloon.textContent = "🎉";
+
+  const string = document.createElement("div");
+  string.className = "string";
+  string.style.height = size * 1.1 + "px";
+  balloon.appendChild(string);
+
+  balloon.style.animation = `floatUp ${6 + Math.random()*4}s linear forwards`;
+
+  document.getElementById("balloon-area").appendChild(balloon);
+
+  setTimeout(() => balloon.remove(), 11000);
+}
+
+setInterval(createBalloon, 600);
+for(let i=0;i<6;i++){
+  setTimeout(createBalloon, i * 300);
+}
+</script>
+
+</body>
+</html>
