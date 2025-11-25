@@ -199,6 +199,17 @@
   100% { transform: translateY(110vh) rotate(360deg); }
 }
 
+#messages .card {
+  margin-bottom: 14px;     /* ruimte tussen kaartjes */
+}
+
+#messages h3 {
+  color: #E18AB2;          /* zacht roze, matcht je accentkleur */
+  font-size: 22px;
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
   </style>
 </head>
 
@@ -219,6 +230,7 @@
 Confetti uitzetten
 </button>
 
+
   <main>
 
     <section>
@@ -227,7 +239,7 @@ Confetti uitzetten
       <div class="card hero big-card" id="hero">
         <div class="hero-content">
           <h2>Hoera! Yrsa is 12 🎂</h2>
-          <p class="subtitle"></p>
+          <p class="subtitle">Ik hoop dat je een leuke verjaardag hebt en dat je Galgje een beetje kan. Hoewel ik er helaas niet bij kan zijn heb ik zo toch nog een klein cadeautje!</p>
         </div>
         <div id="balloon-area" style="position:absolute; inset:0; pointer-events:none;"></div>
       </div>
@@ -236,7 +248,7 @@ Confetti uitzetten
 
       <!-- SPELLETJES -->
       <div class="card big-card">
-        <h3>Spelletjes</h3>
+        <h3>Spelletje</h3>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
 
@@ -253,7 +265,7 @@ Confetti uitzetten
                 </div>
 
                 <div style="display:flex; gap:8px;">
-                  <input id="letter-input" maxlength="1" placeholder="a">
+                  <input id="letter-input" maxlength="1" placeholder="a" autocomplete="off">
                   <button id="guess-btn">Raad</button>
                 </div>
 
@@ -282,52 +294,29 @@ Confetti uitzetten
 
         <div class="photo-grid">
 
-          <div class="photo-box"><img src="AchterJunah.jpeg"></div>
-          <div class="photo-box"><img src="Brocolli.jpeg"></div>
+          <div class="photo-box"><img src="AchterJunah.png" alt=""></div>
+          <div class="photo-box"><img src="Brocolli.jpeg" alt=""></div>
 
-          <div class="photo-box"><img src="Grog.jpeg"></div>
-          <div class="photo-box"><img src="Musical.jpeg"></div>
+          <div class="photo-box"><img src="Grog.jpeg" alt=""></div>
+          <div class="photo-box"><img src="Musical.jpeg" alt=""></div>
 
-          <div class="photo-box"><img src="Onder.jpeg"></div>
-          <div class="photo-box"><img src="Pinguin.jpeg"></div>
+          <div class="photo-box"><img src="Onder.jpeg" alt=""></div>
+          <div class="photo-box"><img src="Pinguin.jpeg" alt=""></div>
 
-          <div class="photo-box"><img src="Rodel.jpeg"></div>
-          <div class="photo-box"><img src="Stranger.jpeg"></div>
+          <div class="photo-box"><img src="Rodel.jpeg" alt=""></div>
+          <div class="photo-box"><img src="Stranger.jpeg" alt=""></div>
 
-          <div class="photo-box"><img src="Top.jpeg"></div>
-          <div class="photo-box"><img src="yrsa jong.jpg"></div>
+          <div class="photo-box"><img src="Top.jpeg" alt=""></div>
+          <div class="photo-box"><img src="yrsa jong.jpg" alt=""></div>
         </div>
       </div>
 
       <div style="height:20px"></div>
 
-      <!-- TEKSTVAK -->
-      <div class="card big-card">
-        <h3>Berichtjes</h3>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-        <br>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-        <br>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-        <br>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-        <br>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-        <br>
-        <div class="text-box" contenteditable="true">
-          Schrijf hier een leuk berichtje voor Yrsa! 🎉
-        </div>
-      </div>
+<div class="card big-card">
+  <h3>Berichtjes</h3>
+  <div id="messages"></div>
+</div>
 
     </section>
 
@@ -339,19 +328,34 @@ Confetti uitzetten
 /* -------------------- GALGJE -------------------- */
 
 const paardenWoorden = [
-  "pony","galop","zadel","sprong","manege","hoefijzer","mustang",
-  "fjord","tinker","quarter","dressuur","ruiter","veulen"
+  "Yrsa",
+  "Sjon Stopcontact",
+  "Paard",
+  "Fjord",
+  "Verjaardag",
+  "Taart",
+  "Roblox",
+  "Minecraft",
+  "Princes",
+  "Voetbal",
+  "Twaalf",
+  "Manege",
+  "Zweden"
 ];
 
-let secretWord = paardenWoorden[Math.floor(Math.random()*paardenWoorden.length)];
+let secretWord = "";
+let secretWordLower = "";
 let display = [];
 let tries = 6;
 let guessed = [];
+let lastWord = null;
 
 const svgBox = document.getElementById("hangman-svg");
 const displayWord = document.getElementById("display-word");
 const triesLeft = document.getElementById("tries-left");
 const guessedLetters = document.getElementById("guessed-letters");
+const inputField = document.getElementById("letter-input");
+const guessBtn = document.getElementById("guess-btn");
 
 function drawHangman(errors) {
   svgBox.innerHTML = `
@@ -372,30 +376,66 @@ function drawHangman(errors) {
 }
 
 function startGame() {
-  display = Array(secretWord.length).fill("_");
+  // kies woord en zet alles terug
+  let newWord;
+do {
+  newWord = paardenWoorden[Math.floor(Math.random() * paardenWoorden.length)];
+} while (newWord === lastWord);
+
+secretWord = newWord;
+lastWord = newWord;
+
+  secretWordLower = secretWord.toLowerCase();
+
+  tries = 6;
   guessed = [];
-  displayWord.textContent = display.join(" ");
+  // display: underscore voor letters, spaties blijven spaties, andere tekens (bijv. -) tonen we direct
+  display = secretWord.split("").map(ch => {
+    if (ch === " ") return " ";
+    // als het geen letter is (bijv. apostrof), laat het zien
+    return /[a-zA-Z]/.test(ch) ? "_" : ch;
+  });
+
+  updateDisplay();
   triesLeft.textContent = tries;
   guessedLetters.textContent = "-";
   drawHangman(0);
 }
 
-function guessLetter() {
-  const input = document.getElementById("letter-input");
-  const letter = input.value.toLowerCase();
-  input.value = "";
+function updateDisplay() {
+  // laat originele hoofdletters zien waar van toepassing (gebruik secretWord)
+  const shown = display.map((ch, i) => ch === "_" ? "_" : secretWord[i]);
+  displayWord.textContent = shown.join(" ");
+}
 
-  if(!letter.match(/[a-z]/)) return;
-  if(guessed.includes(letter)) return;
+function normalizeLetter(l) {
+  // simpele normalisatie: alleen a-z (lowercase). je kunt hier uitbreiden voor accents als nodig
+  return l.toLowerCase();
+}
+
+function guessLetter() {
+  const raw = inputField.value;
+  inputField.value = "";
+  if (!raw) return;
+
+  const letter = normalizeLetter(raw);
+
+  // accepteer alleen letters a-z (voorkom cijfers en andere tekens)
+  if (!letter.match(/^[a-z]$/)) return;
+
+  if (guessed.includes(letter)) return; // al geraden
 
   guessed.push(letter);
-  guessedLetters.textContent = guessed.join(", ");
+  guessedLetters.textContent = guessed.length ? guessed.join(", ") : "-";
 
-  if (secretWord.includes(letter)) {
-    secretWord.split("").forEach((ch,i)=>{
-      if (ch === letter) display[i] = letter;
+  if (secretWordLower.includes(letter)) {
+    // onthul alle posities (houd originele hoofdletters/tekens van secretWord)
+    secretWordLower.split("").forEach((ch, i) => {
+      if (ch === letter) {
+        display[i] = secretWord[i]; // gebruik originele case
+      }
     });
-    displayWord.textContent = display.join(" ");
+    updateDisplay();
   } else {
     tries--;
     triesLeft.textContent = tries;
@@ -403,29 +443,45 @@ function guessLetter() {
 
   drawHangman(6 - tries);
 
+  // WIN
   if (!display.includes("_")) {
-    setTimeout(()=>alert("🎉 Je hebt gewonnen!"),100);
+    setTimeout(() => {
+      alert("🎉 Je hebt gewonnen!");
+      startGame();
+    }, 150);
   }
 
+  // LOSS
   if (tries <= 0) {
-    setTimeout(()=>alert("😢 Verloren! Het woord was: " + secretWord),100);
+    setTimeout(() => {
+      alert("😢 Verloren! Het woord was: " + secretWord);
+      startGame();
+    }, 150);
   }
 }
 
-document.getElementById("guess-btn").onclick = guessLetter;
+// enter key support
+inputField.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    guessLetter();
+  }
+});
 
+guessBtn.addEventListener("click", guessLetter);
+
+// start
 startGame();
 
-/* -------------------- BALLOONS -------------------- */
+/* -------------------- BALLOONS / CONFETTI -------------------- */
 function createConfetti() {
-for (let i = 0; i < 120; i++) {
-const conf = document.createElement("div");
-conf.classList.add("confetti");
-conf.style.left = Math.random() * 100 + "vw";
-conf.style.animationDuration = 3 + Math.random() * 4 + "s";
-conf.style.backgroundColor = ["#ff70a6", "#ff9770", "#ffd670", "#70d6ff"][Math.floor(Math.random()*4)];
-document.body.appendChild(conf);
-}
+  for (let i = 0; i < 120; i++) {
+    const conf = document.createElement("div");
+    conf.classList.add("confetti");
+    conf.style.left = Math.random() * 100 + "vw";
+    conf.style.animationDuration = 3 + Math.random() * 4 + "s";
+    conf.style.backgroundColor = ["#ff70a6", "#ff9770", "#ffd670", "#70d6ff"][Math.floor(Math.random()*4)];
+    document.body.appendChild(conf);
+  }
 }
 createConfetti();
 
@@ -449,32 +505,28 @@ function toggleConfetti() {
 
 document.getElementById("toggle-confetti").addEventListener("click", toggleConfetti);
 
+</script>
 
+<script>
+/* BERICHTJES (ongewijzigd) */
 const messages = [
-["Papa", "Lieve Yrsa, ik ben super trots op je en hou van je!"],
-["Mama", "Gefeliciteerd mooie meid, ik ben zo blij met jou!"],
-["Junah", "Je bent de allerliefste zus die ik me kan wensen!"],
-["Senna", "Happy birthday sis! Hou van jou!"],
-["Molly", "Waf waf! (Ik hou van knuffels!)"],
-["Indy", "Je bent mijn favoriete mens!"],
+  ["Papa", "Lieve Yrsa, ik ben super trots op je en hou van je!"],
+  ["Mama", "Gefeliciteerd mooie meid, ik ben zo blij met jou!"],
+  ["Junah", "Je bent de allerliefste zus die ik me kan wensen!"],
+  ["Senna", "Happy birthday sis! Hou van jou!"],
+  ["Molly", "Waf waf! (Ik hou van knuffels!)"],
+  ["Indy", "Je bent mijn favoriete mens!"],
 ];
-
 
 const msgContainer = document.getElementById("messages");
 
-
 messages.forEach(([name, text]) => {
-const div = document.createElement("div");
-div.className = "card";
-div.innerHTML = `<h3>${name}</h3><p>${text}</p>`;
-msgContainer.appendChild(div);
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `<h3>${name}</h3><p>${text}</p>`;
+  msgContainer.appendChild(div);
 });
 </script>
 
 </body>
 </html>
-
-
-
-
-
